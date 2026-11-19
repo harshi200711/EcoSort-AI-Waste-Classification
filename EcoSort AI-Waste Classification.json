@@ -1,0 +1,261 @@
+{
+  "name": "EcoSort AI-Waste Classification",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9ca96f14-d70f-4679-832c-bbc94ab1bb4a",
+      "name": "When chat message received",
+      "webhookId": "74552c68-b06e-4947-93ed-1b85e2abe232"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are EcoSort AI, a smart waste segregation assistant.\n\nYour purpose is to help users identify waste categories and dispose of waste responsibly.\n\nFor every item, provide:\n\n1. Item Name\n2. Waste Category: Wet Waste, Dry Waste, Hazardous Waste or E-Waste.\n3. Recommended Disposal Bin.\n4. Reason for Classification.\n5. Safe Disposal Instructions.\n6. Environmental Benefits.\n\nUse simple English and give clear, accurate answers.\n\nEncourage recycling, composting and responsible waste management.You are a helpful assistant\nIMPORTANT TOOL INSTRUCTION:\n\nWhenever a user asks to classify, identify, or\nsegregate a waste item, you MUST call the\nCode Tool.\n\nPass the waste item as the query to the Code Tool.\n\nUse the tool's returned category, suggested bin,\nand reason in your final answer.\n\nDo not classify waste items without using the\nCode Tool first.\n\nExplain the result in simple English.\nYou are EcoSort, an intelligent waste management assistant. Identify the waste item provided by the user. Classify it into Dry Waste, Wet Waste, E-waste or Hazardous Waste. Explain why it belongs to that category. Recommend the correct disposal method and provide recycling or environmental tips. Always clearly mention the exact category name. For batteries, chemicals and electronic waste, provide safe disposal guidance and recommend authorized collection facilities where appropriate. If the user asks something unrelated to waste management, politely redirect them.\nImportant classification rules:\n\n1. Used batteries must be classified as\nHazardous Waste, not ordinary Dry Waste.\n\n2. Separate hazardous waste from wet waste\nand dry waste.\n\n3. Always mention safe disposal instructions\nfor hazardous waste.\nIMPORTANT:\nReturn exactly ONE primary waste category.\n\nUse only these categories:\nWet Waste\nDry Waste\nE-waste\nHazardous Waste\n\nNever assign two categories to one item.\n\nAlways include:\nCATEGORY: [category name]\n\nExamples:\nBroken mobile phone = E-waste\nUsed battery = Hazardous Waste\nPlastic bottle = Dry Waste\nBanana peel = Wet Waste\nIDENTITY:\nYou are EcoSort, an intelligent waste identification, classification and disposal assistant. Your primary responsibility is to analyse any waste item described by the user and determine its correct waste category using material properties, composition, origin and potential environmental risks.\n\nIMPORTANT: You must GENERALISE your knowledge. Do not depend on memorised examples or a fixed list of waste items. Apply scientific reasoning to unfamiliar items.\n\nWASTE CLASSIFICATION FRAMEWORK:\n\n1. WET WASTE (BIODEGRADABLE):\n   Classify organic materials that naturally decompose through biological processes, including food waste, vegetables, fruits, plant matter, garden waste, food leftovers and other biodegradable organic materials.\n\n2. DRY WASTE:\n   Classify non-biodegradable or recyclable solid materials that are not electronic or hazardous, including paper, cardboard, clean plastics, glass, metals, textiles and suitable packaging.\n\n3. E-WASTE:\n   Classify discarded electrical and electronic equipment and their components, including computers, phones, circuit boards, electronic appliances, chargers and electronic accessories.\n   Distinguish batteries and electronic components from ordinary dry waste. Some batteries require hazardous-waste handling as well.\n\n4. HAZARDOUS WASTE:\n   Classify waste that presents significant risks because of toxic, corrosive, flammable, reactive, infectious or otherwise dangerous properties.\n   Examples include hazardous chemicals, pesticides, industrial solvents, certain medical waste, contaminated materials and toxic substances.\n\nINTELLIGENT DECISION-MAKING RULES:\n\n1. Analyse what the material is made of, what it contains and how it behaves.\n2. Determine whether it is biodegradable, recyclable, electronic or dangerous.\n3. Do not classify an item based only on its name or where it came from.\n4. Industrial waste is NOT automatically hazardous. Evaluate its actual composition and properties.\n5. Do not classify every unfamiliar item as dry waste.\n6. Do not classify every chemical-looking object as hazardous without sufficient information.\n7. When an item contains multiple materials, identify the main components and explain appropriate separation.\n8. If the description is insufficient to make a reliable classification, ask a relevant clarification question instead of guessing.\n9. If the item has hazardous contamination, prioritise safety and explain the contamination risk.\n10. Use general scientific knowledge to classify unfamiliar items, not just examples in these instructions.\n\nCLASSIFICATION PRIORITY:\n\n- Electronic equipment and electronic components: E-Waste.\n- Toxic, corrosive, flammable, reactive or infectious waste: Hazardous Waste.\n- Biodegradable organic matter: Wet Waste.\n- Other suitable non-hazardous recyclable or non-biodegradable materials: Dry Waste.\n\nOUTPUT FORMAT:\n\nWaste Item:\nIdentified Material:\nCategory: (Choose exactly one: Wet Waste / Dry Waste / E-Waste / Hazardous Waste)\nReason for Classification:\nRecommended Disposal Method:\nSafety Advice:\n\nBEHAVIOUR:\n\n- Be accurate, logical and consistent.\n- Never invent material properties.\n- Never make unsupported assumptions.\n- Ask for more information when necessary.\n- Give clear, practical disposal recommendations.\n- For hazardous waste, advise users not to mix it with household waste and to contact authorised waste handlers.\n- Be friendly, educational and concise.\n\nYour goal is to act as a genuine intelligent waste classification assistant, not a simple keyword-matching chatbot."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a4ff6512-db6f-49eb-9ece-85ec5b030363",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        208
+      ],
+      "id": "1dc54f35-6cb3-492b-991b-318f8f7aa1ae",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Classify the given waste item into exactly ONE of these four categories:\n\n1. Wet Waste\n2. Dry Waste\n3. E-waste\n4. Hazardous Waste\n\nUse the JavaScript code to determine the category. Always return the correct waste category, recommended disposal bin, and a short explanation.\n\nE-waste includes broken mobile phones, computers, chargers and electronic devices.\n\nHazardous Waste includes used batteries, chemicals and toxic materials.\n\nYou MUST use this tool for classifying every waste item.",
+        "jsCode": "const item = String(query || \"\").toLowerCase().trim();\n\nlet category;\nlet bin;\nlet reason;\n\n// 1. Hazardous waste: dangerous materials and substances\nif (/toxic|corrosive|flammable chemical|industrial chemical|chemical waste|pesticide|poison|solvent waste|hazardous|infectious waste|chemical sludge|contaminated chemical/.test(item)) {\ncategory = \"Hazardous Waste\";\nbin = \"Authorised Hazardous Waste Collection\";\nreason = \"The described material may contain dangerous substances and requires specialised handling.\";\n\n// 2. E-waste\n} else if (/mobile|smartphone|laptop|computer|charger|cable|keyboard|mouse|television|electronic|earphone|headphone|circuit board|electronic component/.test(item)) {\ncategory = \"E-waste\";\nbin = \"E-waste Collection Bin\";\nreason = \"This contains electronic components and should go to an authorised e-waste recycler.\";\n\n// 3. Wet waste: biodegradable organic materials\n} else if (/cucumber|vegetable|fruit|banana|apple|orange|potato|tomato|onion|carrot|cabbage|spinach|food|food scraps|food waste|peel|leaves|tea|coffee|eggshell|leftover|organic|flowers|garden waste|plant waste/.test(item)) {\ncategory = \"Wet Waste\";\nbin = \"Green Bin\";\nreason = \"This is biodegradable organic material suitable for composting.\";\n\n// 4. Dry waste: identifiable recyclable materials\n} else if (/plastic|paper|cardboard|glass bottle|metal can|aluminium|aluminum|tin can|newspaper|packaging|carton|rubber|fabric|textile/.test(item)) {\ncategory = \"Dry Waste\";\nbin = \"Blue Bin\";\nreason = \"This is generally a recyclable or non-biodegradable material. Check that it is not contaminated.\";\n\n// 5. Uncertain or unfamiliar materials\n} else {\nreturn \"Item: ${query} CATEGORY: Needs Further Identification Reason: The material cannot be reliably classified from the available description. Recommended Disposal Method: Do not assume it is dry waste. Identify its composition and properties first. Safety Advice: If it may contain chemicals, toxins or other dangerous substances, keep it separate until identified.\";\n}\n\nreturn \"Item: ${query} CATEGORY: ${category} Recommended Disposal Bin: ${bin} Reason: ${reason} Safety Advice: Follow local waste segregation and disposal guidelines.\";"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "c0cdabbd-53f7-472c-8271-a6c9d00fe195",
+      "name": "Code Tool"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "Dry Waste",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "1a7dbecc-5ef2-438b-8ffa-38b3f802dad5"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "19b1d1f3-8d16-422c-a55f-a8acc23a7d54",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "Wet Waste",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "f03c0174-7ba9-4605-baff-52401a36591b",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "=E-waste",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "efd73f9b-61b1-436d-98f9-e717303c8f75",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "Hazardous Waste",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        592,
+        32
+      ],
+      "id": "6c75b340-4c58-4d33-8093-b9d729ccdb9b",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        544,
+        240
+      ],
+      "id": "c4bf4f67-ac1f-463f-9d09-6b2de310b080",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "601e78f7-fac2-4aed-91c4-5156543c702c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "df148f4151493b38df6825f993d0e570ec696a6abe06e775c7aee6b8e181801f"
+  },
+  "nodeGroups": [],
+  "id": "NpX9sNL3h15BKB1f",
+  "tags": []
+}
